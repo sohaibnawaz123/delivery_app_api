@@ -12,11 +12,11 @@
                 "category_name": {
                     "allowNull": false,
                     "field": "category_name",
-                    "seqType": "Sequelize.STRING(80)"
+                    "seqType": "Sequelize.STRING(100)"
                 },
                 "description": {
                     "field": "description",
-                    "seqType": "Sequelize.STRING(255)"
+                    "seqType": "Sequelize.TEXT"
                 },
                 "createdAt": {
                     "allowNull": false,
@@ -31,8 +31,8 @@
             },
             "indexes": []
         },
-        "product_details": {
-            "tableName": "product_details",
+        "product_images": {
+            "tableName": "product_images",
             "schema": {
                 "id": {
                     "autoIncrement": true,
@@ -42,7 +42,6 @@
                 },
                 "product_id": {
                     "allowNull": false,
-                    "unique": true,
                     "field": "product_id",
                     "references": {
                         "model": "products",
@@ -52,17 +51,17 @@
                     "onUpdate": "CASCADE",
                     "seqType": "Sequelize.BIGINT"
                 },
-                "size": {
-                    "field": "size",
-                    "seqType": "Sequelize.STRING(80)"
+                "image_url": {
+                    "allowNull": false,
+                    "field": "image_url",
+                    "seqType": "Sequelize.TEXT"
                 },
-                "color": {
-                    "field": "color",
-                    "seqType": "Sequelize.STRING(80)"
-                },
-                "material": {
-                    "field": "material",
-                    "seqType": "Sequelize.STRING(80)"
+                "is_primary": {
+                    "defaultValue": {
+                        "value": false
+                    },
+                    "field": "is_primary",
+                    "seqType": "Sequelize.BOOLEAN"
                 },
                 "createdAt": {
                     "allowNull": false,
@@ -142,7 +141,7 @@
                 "product_name": {
                     "allowNull": false,
                     "field": "product_name",
-                    "seqType": "Sequelize.STRING(80)"
+                    "seqType": "Sequelize.STRING(120)"
                 },
                 "product_category_id": {
                     "allowNull": false,
@@ -155,23 +154,90 @@
                     "onUpdate": "CASCADE",
                     "seqType": "Sequelize.BIGINT"
                 },
-                "product_description": {
-                    "field": "product_description",
+                "description": {
+                    "field": "description",
+                    "seqType": "Sequelize.TEXT"
+                },
+                "short_description": {
+                    "field": "short_description",
                     "seqType": "Sequelize.STRING(255)"
                 },
-                "product_short_description": {
-                    "field": "product_short_description",
-                    "seqType": "Sequelize.STRING(255)"
+                "base_price": {
+                    "allowNull": false,
+                    "field": "base_price",
+                    "seqType": "Sequelize.DECIMAL(10, 2)"
+                },
+                "status": {
+                    "defaultValue": {
+                        "value": "active"
+                    },
+                    "field": "status",
+                    "seqType": "Sequelize.ENUM('active', 'inactive')"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "created_at",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updated_at",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "product_variants": {
+            "tableName": "product_variants",
+            "schema": {
+                "id": {
+                    "autoIncrement": true,
+                    "primaryKey": true,
+                    "field": "id",
+                    "seqType": "Sequelize.BIGINT"
+                },
+                "product_id": {
+                    "allowNull": false,
+                    "field": "product_id",
+                    "references": {
+                        "model": "products",
+                        "key": "id"
+                    },
+                    "onDelete": "CASCADE",
+                    "onUpdate": "CASCADE",
+                    "seqType": "Sequelize.BIGINT"
+                },
+                "size": {
+                    "allowNull": true,
+                    "field": "size",
+                    "seqType": "Sequelize.STRING(50)"
+                },
+                "color": {
+                    "allowNull": true,
+                    "field": "color",
+                    "seqType": "Sequelize.STRING(50)"
+                },
+                "material": {
+                    "allowNull": true,
+                    "field": "material",
+                    "seqType": "Sequelize.STRING(50)"
                 },
                 "price": {
                     "allowNull": false,
                     "field": "price",
                     "seqType": "Sequelize.DECIMAL(10, 2)"
                 },
-                "stock_quantity": {
-                    "allowNull": false,
-                    "field": "stock_quantity",
+                "stock": {
+                    "defaultValue": {
+                        "value": 0
+                    },
+                    "field": "stock",
                     "seqType": "Sequelize.INTEGER"
+                },
+                "sku": {
+                    "allowNull": true,
+                    "field": "sku",
+                    "seqType": "Sequelize.STRING(100)"
                 },
                 "createdAt": {
                     "allowNull": false,
@@ -289,5 +355,5 @@
             "indexes": []
         }
     },
-    "revision": 3
+    "revision": 1
 }

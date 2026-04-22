@@ -1,7 +1,30 @@
+const normalizeErrorObject = (errorObj) => {
+  if (typeof errorObj === "string") {
+    return {
+      statusCode: 500,
+      message: errorObj
+    };
+  }
+
+  if (!errorObj || typeof errorObj !== "object") {
+    return {
+      statusCode: 500,
+      message: "Something went wrong."
+    };
+  }
+
+  return {
+    statusCode: Number.isInteger(errorObj.statusCode) ? errorObj.statusCode : 500,
+    message: errorObj.message || "Something went wrong."
+  };
+};
+
 const errorResponse = (res, errorObj) => {
-  return res.status(errorObj.statusCode).json({
+  const normalizedError = normalizeErrorObject(errorObj);
+
+  return res.status(normalizedError.statusCode).json({
     success: false,
-    message: errorObj.message
+    message: normalizedError.message
   });
 };
 

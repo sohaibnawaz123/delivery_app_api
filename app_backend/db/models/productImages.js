@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-    const productReviews = sequelize.define(
-        "product_reviews",
+    const productImages = sequelize.define(
+        "product_images",
         {
             id: {
                 type: DataTypes.BIGINT,
@@ -11,34 +11,28 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.BIGINT,
                 allowNull: false,
             },
-            user_id: {
-                type: DataTypes.BIGINT,
+            image_url: {
+                type: DataTypes.TEXT,
                 allowNull: false,
             },
-            rating: {
-                type: DataTypes.DECIMAL(2, 1),
-                allowNull: false,
+            is_primary: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
             },
-            review: DataTypes.TEXT,
         },
         {
-            tableName: "product_reviews",
+            tableName: "product_images",
             timestamps: true,
             underscored: true,
         }
     );
 
-    productReviews.associate = (models) => {
-        productReviews.belongsTo(models.products, {
+    productImages.associate = (models) => {
+        productImages.belongsTo(models.products, {
             foreignKey: "product_id",
             as: "product",
         });
-
-        productReviews.belongsTo(models.users, {
-            foreignKey: "user_id",
-            as: "user",
-        });
     };
 
-    return productReviews;
+    return productImages;
 };

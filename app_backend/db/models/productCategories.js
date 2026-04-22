@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const product_categories = sequelize.define(
+    const productCategories = sequelize.define(
         "product_categories",
         {
             id: {
@@ -8,24 +8,24 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
             },
             category_name: {
-                type: DataTypes.STRING(80),
+                type: DataTypes.STRING(100),
                 allowNull: false,
             },
-            description: DataTypes.STRING(255),
+            description: DataTypes.TEXT,
         },
         {
             tableName: "product_categories",
-            underscored: true,
             timestamps: true,
+            underscored: true,
         }
     );
 
-    product_categories.associate = (models) => {
-        product_categories.hasMany(models.products, {
+    productCategories.associate = (models) => {
+        productCategories.hasMany(models.products, {
             foreignKey: "product_category_id",
             as: "products",
         });
     };
 
-    return product_categories;
+    return productCategories;
 };

@@ -8,15 +8,16 @@ var Sequelize = require('sequelize');
  * createTable "product_categories", deps: []
  * createTable "users", deps: []
  * createTable "products", deps: [product_categories]
- * createTable "product_details", deps: [products]
+ * createTable "product_images", deps: [products]
  * createTable "product_reviews", deps: [products, users]
+ * createTable "product_variants", deps: [products]
  *
  **/
 
 var info = {
     "revision": 1,
     "name": "noname",
-    "created": "2026-04-22T07:30:48.992Z",
+    "created": "2026-04-22T12:05:23.014Z",
     "comment": ""
 };
 
@@ -32,14 +33,13 @@ var migrationCommands = [{
                     "autoIncrement": true
                 },
                 "category_name": {
-                    "type": Sequelize.STRING(80),
+                    "type": Sequelize.STRING(100),
                     "field": "category_name",
                     "allowNull": false
                 },
                 "description": {
-                    "type": Sequelize.STRING(255),
-                    "field": "description",
-                    "allowNull": true
+                    "type": Sequelize.TEXT,
+                    "field": "description"
                 },
                 "createdAt": {
                     "type": Sequelize.DATE,
@@ -170,7 +170,7 @@ var migrationCommands = [{
                     "autoIncrement": true
                 },
                 "product_name": {
-                    "type": Sequelize.STRING(80),
+                    "type": Sequelize.STRING(120),
                     "field": "product_name",
                     "allowNull": false
                 },
@@ -185,31 +185,23 @@ var migrationCommands = [{
                     "field": "product_category_id",
                     "allowNull": false
                 },
-                "product_description": {
-                    "type": Sequelize.STRING(255),
-                    "field": "product_description",
-                    "allowNull": true
+                "description": {
+                    "type": Sequelize.TEXT,
+                    "field": "description"
                 },
-                "product_short_description": {
+                "short_description": {
                     "type": Sequelize.STRING(255),
-                    "field": "product_short_description",
-                    "allowNull": true
+                    "field": "short_description"
                 },
-                "price": {
+                "base_price": {
                     "type": Sequelize.DECIMAL(10, 2),
-                    "field": "price",
-                    "validate": {
-                        "min": 0
-                    },
+                    "field": "base_price",
                     "allowNull": false
                 },
-                "stock_quantity": {
-                    "type": Sequelize.INTEGER,
-                    "field": "stock_quantity",
-                    "validate": {
-                        "min": 0
-                    },
-                    "allowNull": false
+                "status": {
+                    "type": Sequelize.ENUM('active', 'inactive'),
+                    "field": "status",
+                    "defaultValue": "active"
                 },
                 "createdAt": {
                     "type": Sequelize.DATE,
@@ -228,7 +220,7 @@ var migrationCommands = [{
     {
         fn: "createTable",
         params: [
-            "product_details",
+            "product_images",
             {
                 "id": {
                     "type": Sequelize.BIGINT,
@@ -245,23 +237,17 @@ var migrationCommands = [{
                         "key": "id"
                     },
                     "field": "product_id",
-                    "unique": true,
                     "allowNull": false
                 },
-                "size": {
-                    "type": Sequelize.STRING(80),
-                    "field": "size",
+                "image_url": {
+                    "type": Sequelize.TEXT,
+                    "field": "image_url",
                     "allowNull": false
                 },
-                "color": {
-                    "type": Sequelize.STRING(80),
-                    "field": "color",
-                    "allowNull": false
-                },
-                "material": {
-                    "type": Sequelize.STRING(80),
-                    "field": "material",
-                    "allowNull": false
+                "is_primary": {
+                    "type": Sequelize.BOOLEAN,
+                    "field": "is_primary",
+                    "defaultValue": false
                 },
                 "createdAt": {
                     "type": Sequelize.DATE,
@@ -313,15 +299,76 @@ var migrationCommands = [{
                 "rating": {
                     "type": Sequelize.DECIMAL(2, 1),
                     "field": "rating",
-                    "validate": {
-                        "min": 0,
-                        "max": 5
-                    },
                     "allowNull": false
                 },
                 "review": {
                     "type": Sequelize.TEXT,
-                    "field": "review",
+                    "field": "review"
+                },
+                "createdAt": {
+                    "type": Sequelize.DATE,
+                    "field": "created_at",
+                    "allowNull": false
+                },
+                "updatedAt": {
+                    "type": Sequelize.DATE,
+                    "field": "updated_at",
+                    "allowNull": false
+                }
+            },
+            {}
+        ]
+    },
+    {
+        fn: "createTable",
+        params: [
+            "product_variants",
+            {
+                "id": {
+                    "type": Sequelize.BIGINT,
+                    "field": "id",
+                    "primaryKey": true,
+                    "autoIncrement": true
+                },
+                "product_id": {
+                    "type": Sequelize.BIGINT,
+                    "onUpdate": "CASCADE",
+                    "onDelete": "CASCADE",
+                    "references": {
+                        "model": "products",
+                        "key": "id"
+                    },
+                    "field": "product_id",
+                    "allowNull": false
+                },
+                "size": {
+                    "type": Sequelize.STRING(50),
+                    "field": "size",
+                    "allowNull": true
+                },
+                "color": {
+                    "type": Sequelize.STRING(50),
+                    "field": "color",
+                    "allowNull": true
+                },
+                "material": {
+                    "type": Sequelize.STRING(50),
+                    "field": "material",
+                    "allowNull": true
+                },
+                "price": {
+                    "type": Sequelize.DECIMAL(10, 2),
+                    "field": "price",
+                    "allowNull": false
+                },
+                "stock": {
+                    "type": Sequelize.INTEGER,
+                    "field": "stock",
+                    "defaultValue": 0
+                },
+                "sku": {
+                    "type": Sequelize.STRING(100),
+                    "field": "sku",
                     "allowNull": true
                 },
                 "createdAt": {

@@ -8,45 +8,50 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
       product_name: {
-        type: DataTypes.STRING(80),
+        type: DataTypes.STRING(120),
         allowNull: false,
       },
       product_category_id: {
         type: DataTypes.BIGINT,
         allowNull: false,
       },
-      product_description: DataTypes.STRING(255),
-      product_short_description: DataTypes.STRING(255),
-      price: {
+      description: DataTypes.TEXT,
+      short_description: DataTypes.STRING(255),
+      base_price: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
       },
-      stock_quantity: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+      status: {
+        type: DataTypes.ENUM("active", "inactive"),
+        defaultValue: "active",
       },
     },
     {
       tableName: "products",
-      underscored: true,
       timestamps: true,
+      underscored: true,
     }
   );
 
   products.associate = (models) => {
-    products.hasOne(models.productDetails, {
+    products.belongsTo(models.productCategories, {
+      foreignKey: "product_category_id",
+      as: "category",
+    });
+
+    products.hasMany(models.productVariants, {
       foreignKey: "product_id",
-      as: "productDetails",
+      as: "variants",
+    });
+
+    products.hasMany(models.productImages, {
+      foreignKey: "product_id",
+      as: "images",
     });
 
     products.hasMany(models.productReviews, {
       foreignKey: "product_id",
       as: "reviews",
-    });
-
-    products.belongsTo(models.productCategories, {
-      foreignKey: "product_category_id",
-      as: "category",
     });
   };
 

@@ -11,6 +11,16 @@ const env = process.env.NODE_ENV || "staging";
 const config = require(path.join(__dirname, "../../config/config.js"))[env];
 const db = {};
 let sequelize;
+
+const isSequelizeModel = (candidate) => {
+  return (
+    candidate &&
+    typeof candidate === "function" &&
+    candidate.rawAttributes &&
+    typeof candidate.getTableName === "function"
+  );
+};
+
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
@@ -37,18 +47,53 @@ fs.readdirSync(__dirname)
     db[modelName] = model;
   });
 
+const connectDb = async () => {
+  if (sequelize) {
+    return db;
+  }
+
+  validateDbConfig();
+
+  sequelize = new Sequelize(
+    process.env.DB_DATABASE,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
+    {
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      dialect: process.env.DB_DIALECT,
+      logging: false
+    }
+  );
+
+  // If you have a custom initModels, call it here, otherwise db is already populated
+  await sequelize.authenticate();
+  console.log("Database connection established.");
+
+  if (shouldSyncSchema()) {
+    await sequelize.sync();
+    console.log("Database schema synced.");
+  }
+
+  return db;
+};
+
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
 });
 
+db.models = Object.keys(db).reduce((models, key) => {
+  if (isSequelizeModel(db[key])) {
+    models[key] = db[key];
+  }
+  return models;
+}, {});
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
-
+db.connectDb = connectDb;
 module.exports = db;
-
-
 // const { Sequelize, DataTypes } = require("sequelize");
 
 // const defineUserModel = require("./users");
@@ -73,36 +118,7 @@ module.exports = db;
 //   models.users = defineUserModel(sequelize, DataTypes);
 // };
 
-// const connectDb = async () => {
-//   if (sequelize) {
-//     return models;
-//   }
 
-//   validateDbConfig();
-
-//   sequelize = new Sequelize(
-//     process.env.DB_DATABASE,
-//     process.env.DB_USER,
-//     process.env.DB_PASSWORD,
-//     {
-//       host: process.env.DB_HOST,
-//       port: Number(process.env.DB_PORT),
-//       dialect: process.env.DB_DIALECT,
-//       logging: false
-//     }
-//   );
-
-//   initModels();
-//   await sequelize.authenticate();
-//   console.log("Database connection established.");
-
-//   if (shouldSyncSchema()) {
-//     await sequelize.sync();
-//     console.log("Database schema synced.");
-//   }
-
-//   return models;
-// };
 
 // const getSequelize = () => sequelize;
 // const getModels = () => models;
