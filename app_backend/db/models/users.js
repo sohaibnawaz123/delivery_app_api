@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define(
+  const users = sequelize.define(
     "users",
     {
       id: {
@@ -73,9 +73,17 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       tableName: "users",
-      underscored: true
+      underscored: true,
+      timestamps: true
     }
   );
 
-  return User;
+  users.associate = (models) => {
+    users.hasMany(models.productReviews, {
+      foreignKey: "user_id",
+      as: "reviews",
+    });
+  };
+
+  return users;
 };
