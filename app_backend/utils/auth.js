@@ -5,7 +5,7 @@ const normalizeEmail = (email) => {
 };
 
 const generateOtp = () => {
-  return String(crypto.randomInt(100000, 999999));
+  return String(crypto.randomInt(1000, 10000));
 };
 
 const getOtpExpiryDate = (minutes = 10) => {

@@ -93,7 +93,14 @@ db.models = Object.keys(db).reduce((models, key) => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 db.connectDb = connectDb;
-module.exports = db;
+
+// Provide getModels function for compatibility
+const getModels = () => db.models;
+
+module.exports = {
+  ...db,
+  getModels
+};
 // const { Sequelize, DataTypes } = require("sequelize");
 
 // const defineUserModel = require("./users");

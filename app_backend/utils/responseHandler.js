@@ -29,10 +29,11 @@ const errorResponse = (res, errorObj) => {
 };
 
 const successResponse = (res, message, payload = {}, statusCode = 200) => {
+  // Always wrap everything except success and message inside data
   return res.status(statusCode).json({
     success: true,
     message,
-    ...payload
+    data: payload
   });
 };
 

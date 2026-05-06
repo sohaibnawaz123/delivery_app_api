@@ -125,14 +125,14 @@ const signup = async (req, res) => {
 
     sendOtpForNow("SIGNUP_EMAIL_VERIFY", email, emailOtp);
 
+    // Place otp inside data
+    const otpObj = getOtpResponse(emailOtp);
     return successResponse(
       res,
       successName.SIGNUP,
       {
-        data: {
-          user: sanitizeUser(user)
-        },
-        ...getOtpResponse(emailOtp)
+        user: sanitizeUser(user),
+        ...(otpObj.otp ? { otp: otpObj.otp } : {})
       },
       201
     );
@@ -183,9 +183,7 @@ const verifyEmailOtp = async (req, res) => {
       res,
       successName.EMAILVERIFIED,
       {
-        data: {
-          user: sanitizeUser(user)
-        }
+        user: sanitizeUser(user)
       },
       200
     );
@@ -221,12 +219,13 @@ const resendEmailOtp = async (req, res) => {
 
     sendOtpForNow("RESEND_EMAIL_VERIFY", email, otp);
 
+    const otpObj = getOtpResponse(otp);
     return successResponse(
       res,
       successName.OTPSENT,
       {
-        data: { email },
-        ...getOtpResponse(otp)
+        email,
+        ...(otpObj.otp ? { otp: otpObj.otp } : {})
       },
       200
     );
@@ -283,11 +282,9 @@ const login = async (req, res) => {
       res,
       successName.LOGIN,
       {
-        data: {
-          user: sanitizeUser(user),
-          access_token: accessToken,
-          refresh_token: refreshToken
-        }
+        user: sanitizeUser(user),
+        access_token: accessToken,
+        refresh_token: refreshToken
       },
       200
     );
@@ -311,7 +308,7 @@ const forgotPassword = async (req, res) => {
       return successResponse(
         res,
         successName.OTPSENT,
-        { data: { email } },
+        { email },
         200
       );
     }
@@ -324,12 +321,13 @@ const forgotPassword = async (req, res) => {
 
     sendOtpForNow("FORGOT_PASSWORD", email, otp);
 
+    const otpObj = getOtpResponse(otp);
     return successResponse(
       res,
       successName.OTPSENT,
       {
-        data: { email },
-        ...getOtpResponse(otp)
+        email,
+        ...(otpObj.otp ? { otp: otpObj.otp } : {})
       },
       200
     );

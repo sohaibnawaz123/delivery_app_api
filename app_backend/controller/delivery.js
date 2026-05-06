@@ -6,7 +6,7 @@ const orders = [];
 let orderIdCounter = 1;
 
 const listOrders = async (req, res) => {
-  return successResponse(res, successName.SUCCESS, { data: orders }, 200);
+  return successResponse(res, successName.SUCCESS, orders, 200);
 };
 
 const getOrderById = async (req, res) => {
@@ -17,7 +17,7 @@ const getOrderById = async (req, res) => {
     return errorResponse(res, getErrorCode(errorName.NOTFOUND));
   }
 
-  return successResponse(res, successName.SUCCESS, { data: order }, 200);
+  return successResponse(res, successName.SUCCESS, order, 200);
 };
 
 const createOrder = async (req, res) => {
@@ -34,7 +34,7 @@ const createOrder = async (req, res) => {
 
   orders.push(newOrder);
 
-  return successResponse(res, successName.CREATED, { data: newOrder }, 201);
+  return successResponse(res, successName.CREATED, newOrder, 201);
 };
 
 const updateOrderStatus = async (req, res) => {
@@ -54,7 +54,7 @@ const updateOrderStatus = async (req, res) => {
   order.status = status;
   order.updated_at = new Date().toISOString();
 
-  return successResponse(res, successName.SUCCESS, { data: order }, 200);
+  return successResponse(res, successName.SUCCESS, order, 200);
 };
 
 module.exports = {

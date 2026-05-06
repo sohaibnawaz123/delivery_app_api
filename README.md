@@ -78,7 +78,7 @@ Starter backend scaffold for a delivery service API.
 ```json
 {
   "email": "sohaib@example.com",
-  "otp": "123456"
+  "otp": "1234"
 }
 ```
 
@@ -104,7 +104,7 @@ Starter backend scaffold for a delivery service API.
 ```json
 {
   "email": "sohaib@example.com",
-  "otp": "123456",
+  "otp": "1234",
   "password": "Passw0rdB!",
   "confirm_password": "Passw0rdB!"
 }
